@@ -16,15 +16,15 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'http://localhost:3001',
+  url: 'https://github.com/SyedaAnabia',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/ai-systems-book/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'SyedaAnabia', // Usually your GitHub org/user name.
-  projectName: 'i-systems-book', // Usually your repo name.
+  projectName: 'ai-systems-book', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -45,7 +45,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/SyedaAnabia',
+            'https://github.com/SyedaAnabia/ai-systems-book',
         },
         blog: {
           showReadingTime: true,
