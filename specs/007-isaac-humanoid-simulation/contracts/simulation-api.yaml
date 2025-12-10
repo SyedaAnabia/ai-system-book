@@ -1,0 +1,1598 @@
+openapi: 3.0.3
+info:
+  title: Isaac Humanoid Simulation and Navigation API
+  description: API for controlling and interacting with the Isaac Humanoid Simulation and Navigation System
+  version: 1.0.0
+  contact:
+    name: AI Systems in the Physical World Team
+    email: ai-systems-team@example.com
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: https://isaac-sim-api.example.com
+    description: Production server
+
+paths:
+  /environments:
+    get:
+      summary: List all available virtual environments
+      description: Retrieve a list of all virtual environments available for simulation
+      responses:
+        '200':
+          description: List of available environments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  environments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VirtualEnvironment'
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new virtual environment
+      description: Create a new virtual environment with specified properties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VirtualEnvironmentCreateRequest'
+      responses:
+        '201':
+          description: Environment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualEnvironment'
+        '400':
+          description: Invalid request data
+        '500':
+          description: Internal server error
+
+  /environments/{id}:
+    get:
+      summary: Get specific virtual environment
+      description: Retrieve details of a specific virtual environment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the environment to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Environment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualEnvironment'
+        '404':
+          description: Environment not found
+        '500':
+          description: Internal server error
+    put:
+      summary: Update virtual environment
+      description: Update properties of an existing virtual environment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the environment to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VirtualEnvironmentUpdateRequest'
+      responses:
+        '200':
+          description: Environment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VirtualEnvironment'
+        '400':
+          description: Invalid request data
+        '404':
+          description: Environment not found
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete virtual environment
+      description: Delete a specific virtual environment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the environment to delete
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Environment deleted successfully
+        '404':
+          description: Environment not found
+        '500':
+          description: Internal server error
+
+  /robots:
+    get:
+      summary: List all humanoid robot models
+      description: Retrieve a list of all available humanoid robot models in simulation
+      responses:
+        '200':
+          description: List of available robot models
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  robots:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/HumanoidRobotModel'
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new humanoid robot model
+      description: Create a new humanoid robot model with specified configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HumanoidRobotCreateRequest'
+      responses:
+        '201':
+          description: Robot model created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HumanoidRobotModel'
+        '400':
+          description: Invalid request data
+        '500':
+          description: Internal server error
+
+  /robots/{id}:
+    get:
+      summary: Get specific humanoid robot model
+      description: Retrieve details of a specific humanoid robot model by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the robot model to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Robot model details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HumanoidRobotModel'
+        '404':
+          description: Robot model not found
+        '500':
+          description: Internal server error
+    put:
+      summary: Update humanoid robot model
+      description: Update properties of an existing robot model
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the robot model to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HumanoidRobotUpdateRequest'
+      responses:
+        '200':
+          description: Robot model updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HumanoidRobotModel'
+        '400':
+          description: Invalid request data
+        '404':
+          description: Robot model not found
+        '500':
+          description: Internal server error
+
+  /robots/{id}/spawn:
+    post:
+      summary: Spawn robot in environment
+      description: Add the robot to the specified virtual environment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the robot model to spawn
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RobotSpawnRequest'
+      responses:
+        '200':
+          description: Robot spawned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RobotSpawnResponse'
+        '400':
+          description: Invalid request data
+        '404':
+          description: Robot model or environment not found
+        '500':
+          description: Internal server error
+
+  /navigation/plan:
+    post:
+      summary: Generate navigation plan
+      description: Create a path plan for humanoid robot navigation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NavigationPlanRequest'
+      responses:
+        '200':
+          description: Navigation plan generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavigationPlan'
+        '400':
+          description: Invalid request data
+        '500':
+          description: Internal server error
+
+  /navigation/execute:
+    post:
+      summary: Execute navigation plan
+      description: Start executing a navigation plan with the specified robot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NavigationExecuteRequest'
+      responses:
+        '200':
+          description: Navigation started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavigationExecuteResponse'
+        '400':
+          description: Invalid request data
+        '500':
+          description: Internal server error
+
+  /slam/map:
+    get:
+      summary: Get current SLAM map
+      description: Retrieve the current SLAM map being maintained by the system
+      parameters:
+        - name: resolution
+          in: query
+          required: false
+          description: Desired map resolution (meters per cell)
+          schema:
+            type: number
+            format: float
+            default: 0.05
+      responses:
+        '200':
+          description: Current SLAM map
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SLAMMap'
+        '500':
+          description: Internal server error
+
+  /datasets/generate:
+    post:
+      summary: Generate synthetic dataset
+      description: Generate synthetic dataset with specified parameters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyntheticDatasetRequest'
+      responses:
+        '200':
+          description: Dataset generation started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyntheticDatasetResponse'
+        '400':
+          description: Invalid request data
+        '500':
+          description: Internal server error
+
+  /datasets:
+    get:
+      summary: List generated datasets
+      description: Retrieve a list of all generated synthetic datasets
+      responses:
+        '200':
+          description: List of generated datasets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  datasets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SyntheticDataset'
+        '500':
+          description: Internal server error
+
+  /sensors/{robotId}/data:
+    get:
+      summary: Get sensor data from robot
+      description: Retrieve current sensor data from a specific robot
+      parameters:
+        - name: robotId
+          in: path
+          required: true
+          description: ID of the robot to get sensor data from
+          schema:
+            type: string
+        - name: sensorType
+          in: query
+          required: false
+          description: Type of sensor data to retrieve (RGB, DEPTH, LIDAR)
+          schema:
+            type: string
+            enum: [RGB, DEPTH, LIDAR]
+        - name: since
+          in: query
+          required: false
+          description: ISO timestamp to get data since
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Sensor data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorDataResponse'
+        '400':
+          description: Invalid request data
+        '404':
+          description: Robot not found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    VirtualEnvironment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the environment
+        name:
+          type: string
+          description: Human-readable name for the environment
+        description:
+          type: string
+          description: Detailed description of the environment
+        physicsProperties:
+          $ref: '#/components/schemas/PhysicsProperties'
+        lightingConfig:
+          $ref: '#/components/schemas/LightingConfig'
+        objects:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimulatedObject'
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Additional metadata about the environment
+        createdAt:
+          type: string
+          format: date-time
+          description: When the environment was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the environment was last updated
+      required:
+        - id
+        - name
+        - physicsProperties
+        - createdAt
+        - updatedAt
+
+    PhysicsProperties:
+      type: object
+      properties:
+        gravity:
+          $ref: '#/components/schemas/Vector3'
+        frictionCoefficient:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        restitutionCoefficient:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        linearDamping:
+          type: number
+          format: float
+        angularDamping:
+          type: number
+          format: float
+      required:
+        - gravity
+        - frictionCoefficient
+        - restitutionCoefficient
+
+    Vector3:
+      type: object
+      properties:
+        x:
+          type: number
+          format: float
+        y:
+          type: number
+          format: float
+        z:
+          type: number
+          format: float
+      required:
+        - x
+        - y
+        - z
+
+    LightingConfig:
+      type: object
+      properties:
+        ambientLight:
+          $ref: '#/components/schemas/ColorRGBA'
+        directionalLights:
+          type: array
+          items:
+            $ref: '#/components/schemas/DirectionalLight'
+        environmentMap:
+          type: string
+          description: Path to HDR environment map
+      required:
+        - ambientLight
+
+    ColorRGBA:
+      type: object
+      properties:
+        r:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        g:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        b:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        a:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+      required:
+        - r
+        - g
+        - b
+        - a
+
+    DirectionalLight:
+      type: object
+      properties:
+        name:
+          type: string
+        direction:
+          $ref: '#/components/schemas/Vector3'
+        color:
+          $ref: '#/components/schemas/ColorRGBA'
+        intensity:
+          type: number
+          format: float
+      required:
+        - name
+        - direction
+        - color
+        - intensity
+
+    SimulatedObject:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        meshPath:
+          type: string
+          description: Path to the object's 3D mesh
+        position:
+          $ref: '#/components/schemas/Vector3'
+        rotation:
+          $ref: '#/components/schemas/Quaternion'
+        scale:
+          $ref: '#/components/schemas/Vector3'
+        mass:
+          type: number
+          format: float
+        colliderType:
+          type: string
+          enum: [box, sphere, capsule, mesh]
+        materialProperties:
+          $ref: '#/components/schemas/MaterialProperties'
+      required:
+        - id
+        - name
+        - meshPath
+        - position
+        - mass
+
+    Quaternion:
+      type: object
+      properties:
+        x:
+          type: number
+          format: float
+        y:
+          type: number
+          format: float
+        z:
+          type: number
+          format: float
+        w:
+          type: number
+          format: float
+      required:
+        - x
+        - y
+        - z
+        - w
+
+    MaterialProperties:
+      type: object
+      properties:
+        color:
+          $ref: '#/components/schemas/ColorRGBA'
+        roughness:
+          type: number
+          format: float
+        metallic:
+          type: number
+          format: float
+        albedoTexture:
+          type: string
+          description: Path to the albedo texture
+        normalTexture:
+          type: string
+          description: Path to the normal texture
+
+    HumanoidRobotModel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        urdfPath:
+          type: string
+        sdfPath:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+        joints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Joint'
+        actuators:
+          type: array
+          items:
+            $ref: '#/components/schemas/Actuator'
+        sensors:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimulatedSensor'
+        kinematicChain:
+          $ref: '#/components/schemas/KinematicChain'
+        balanceController:
+          $ref: '#/components/schemas/BalanceController'
+        locomotionController:
+          $ref: '#/components/schemas/LocomotionController'
+        collisionGeometry:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollisionGeometry'
+        status:
+          type: string
+          enum: [created, initialized, calibrated, active, paused, error]
+      required:
+        - id
+        - name
+        - links
+        - joints
+        - sensors
+        - status
+
+    Link:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        inertialProperties:
+          $ref: '#/components/schemas/InertialProperties'
+        visualMesh:
+          $ref: '#/components/schemas/MeshVisual'
+        collisionGeometry:
+          $ref: '#/components/schemas/CollisionGeometry'
+        parentJoint:
+          type: string
+          description: Name of the parent joint connecting to this link
+      required:
+        - id
+        - name
+
+    InertialProperties:
+      type: object
+      properties:
+        mass:
+          type: number
+          format: float
+        centerOfMass:
+          $ref: '#/components/schemas/Vector3'
+        inertiaMatrix:
+          type: array
+          items:
+            type: number
+            format: float
+          minItems: 9
+          maxItems: 9
+
+    MeshVisual:
+      type: object
+      properties:
+        meshPath:
+          type: string
+        material:
+          $ref: '#/components/schemas/MaterialProperties'
+
+    CollisionGeometry:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [box, sphere, capsule, mesh]
+        size:
+          $ref: '#/components/schemas/Vector3'
+        meshPath:
+          type: string
+          description: Path to mesh if type is mesh
+
+    Joint:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        jointType:
+          type: string
+          enum: [revolute, prismatic, fixed, continuous, floating, planar]
+        parentLink:
+          type: string
+        childLink:
+          type: string
+        originTransform:
+          $ref: '#/components/schemas/Transform'
+        axis:
+          $ref: '#/components/schemas/Vector3'
+        limits:
+          $ref: '#/components/schemas/JointLimits'
+        dynamics:
+          $ref: '#/components/schemas/JointDynamics'
+      required:
+        - id
+        - name
+        - jointType
+        - parentLink
+        - childLink
+
+    Transform:
+      type: object
+      properties:
+        translation:
+          $ref: '#/components/schemas/Vector3'
+        rotation:
+          $ref: '#/components/schemas/Quaternion'
+
+    JointLimits:
+      type: object
+      properties:
+        lower:
+          type: number
+          format: float
+        upper:
+          type: number
+          format: float
+        effort:
+          type: number
+          format: float
+        velocity:
+          type: number
+          format: float
+
+    JointDynamics:
+      type: object
+      properties:
+        damping:
+          type: number
+          format: float
+        friction:
+          type: number
+          format: float
+
+    Actuator:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        jointName:
+          type: string
+        controlType:
+          type: string
+          enum: [position, velocity, effort]
+        maxEffort:
+          type: number
+          format: float
+        bandwidth:
+          type: number
+          format: float
+
+    SimulatedSensor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        sensorType:
+          type: string
+          enum: [RGB_CAMERA, DEPTH_CAMERA, LIDAR, IMU, GPS, FORCE_TORQUE]
+        parentLink:
+          type: string
+        transform:
+          $ref: '#/components/schemas/Transform'
+        noiseModel:
+          $ref: '#/components/schemas/NoiseModel'
+        configuration:
+          $ref: '#/components/schemas/SensorConfiguration'
+        status:
+          type: string
+          enum: [active, inactive, error]
+      required:
+        - id
+        - name
+        - sensorType
+        - parentLink
+        - configuration
+
+    NoiseModel:
+      type: object
+      properties:
+        noiseType:
+          type: string
+          enum: [gaussian, salt_and_pepper, uniform]
+        mean:
+          type: number
+          format: float
+        variance:
+          type: number
+          format: float
+        bias:
+          type: number
+          format: float
+
+    SensorConfiguration:
+      type: object
+      properties:
+        resolution:
+          $ref: '#/components/schemas/Resolution'
+        fovHorizontal:
+          type: number
+          format: float
+          description: Horizontal field of view in degrees
+        minRange:
+          type: number
+          format: float
+          description: Minimum sensing distance (for depth/LiDAR sensors)
+        maxRange:
+          type: number
+          format: float
+          description: Maximum sensing distance (for depth/LiDAR sensors)
+        frameRate:
+          type: integer
+          description: Frames per second
+        compressionFormat:
+          type: string
+          description: Image compression format (for camera sensors)
+        numberOfBeams:
+          type: integer
+          description: Number of beams (for LiDAR sensors)
+
+    Resolution:
+      type: object
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+      required:
+        - width
+        - height
+
+    KinematicChain:
+      type: object
+      properties:
+        chainType:
+          type: string
+          enum: [bipedal, quadrupedal, wheeled, hybrid]
+        baseLink:
+          type: string
+        endEffectors:
+          type: array
+          items:
+            type: string
+        structure:
+          type: array
+          items:
+            type: string
+            description: List of link names in order from base to tip
+
+    BalanceController:
+      type: object
+      properties:
+        controllerType:
+          type: string
+          enum: [zero_moment_point, linear_inverted_pendulum, capture_point]
+        controlFrequency:
+          type: number
+          format: float
+        parameters:
+          type: object
+          additionalProperties: true
+
+    LocomotionController:
+      type: object
+      properties:
+        controllerType:
+          type: string
+          enum: [inverse_kinematics, operational_space_control, model_predictive_control]
+        gaitType:
+          type: string
+          enum: [walk, jog, run, stand, sit]
+        parameters:
+          type: object
+          additionalProperties: true
+
+    NavigationPlan:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        robotId:
+          type: string
+          format: uuid
+        goalPosition:
+          $ref: '#/components/schemas/Vector3'
+        waypoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vector3'
+        trajectories:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrajectoryPoint'
+        plannedAt:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        pathCost:
+          type: number
+          format: float
+        constraints:
+          $ref: '#/components/schemas/PathConstraints'
+        status:
+          type: string
+          enum: [created, validating, confirmed, executing, completed, cancelled, failed]
+      required:
+        - id
+        - robotId
+        - goalPosition
+        - waypoints
+        - plannedAt
+        - status
+
+    TrajectoryPoint:
+      type: object
+      properties:
+        position:
+          $ref: '#/components/schemas/Vector3'
+        orientation:
+          $ref: '#/components/schemas/Quaternion'
+        linearVelocity:
+          $ref: '#/components/schemas/Vector3'
+        angularVelocity:
+          $ref: '#/components/schemas/Vector3'
+        timestamp:
+          type: number
+          format: float
+          description: Time offset from plan start
+
+    PathConstraints:
+      type: object
+      properties:
+        maxVelocity:
+          type: number
+          format: float
+        maxAcceleration:
+          type: number
+          format: float
+        minTurningRadius:
+          type: number
+          format: float
+        obstacleClearance:
+          type: number
+          format: float
+
+    SLAMMap:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        mapType:
+          type: string
+          enum: [occupancy_grid, point_cloud, octree]
+        originTransform:
+          $ref: '#/components/schemas/Transform'
+        resolution:
+          type: number
+          format: float
+          description: Resolution in meters per cell for grid maps
+        dimensions:
+          $ref: '#/components/schemas/Vector3'
+        data:
+          type: array
+          items:
+            type: number
+            format: float
+        posesHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/PoseStamped'
+        landmarks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Landmark'
+        lastUpdated:
+          type: string
+          format: date-time
+        confidenceMap:
+          type: array
+          items:
+            type: number
+            format: float
+        loopClosureData:
+          $ref: '#/components/schemas/LoopClosureData'
+        status:
+          type: string
+          enum: [initializing, mapping, optimized, updating, frozen]
+
+    PoseStamped:
+      type: object
+      properties:
+        pose:
+          $ref: '#/components/schemas/Pose'
+        timestamp:
+          type: string
+          format: date-time
+        frameId:
+          type: string
+
+    Pose:
+      type: object
+      properties:
+        position:
+          $ref: '#/components/schemas/Vector3'
+        orientation:
+          $ref: '#/components/schemas/Quaternion'
+
+    Landmark:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        position:
+          $ref: '#/components/schemas/Vector3'
+        descriptor:
+          type: string
+          format: byte
+          description: Feature descriptor for landmark identification
+        observationCount:
+          type: integer
+        firstObserved:
+          type: string
+          format: date-time
+        lastObserved:
+          type: string
+          format: date-time
+        covariance:
+          $ref: '#/components/schemas/Matrix6x6'
+
+    Matrix6x6:
+      type: array
+      items:
+        type: array
+        items:
+          type: number
+          format: float
+        minItems: 6
+        maxItems: 6
+      minItems: 6
+      maxItems: 6
+
+    LoopClosureData:
+      type: object
+      properties:
+        detectedLoops:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoopClosure'
+        optimizationRequired:
+          type: boolean
+
+    LoopClosure:
+      type: object
+      properties:
+        timestamp1:
+          type: string
+          format: date-time
+        timestamp2:
+          type: string
+          format: date-time
+        transform:
+          $ref: '#/components/schemas/Transform'
+        confidence:
+          type: number
+          format: float
+
+    SyntheticDataset:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        size:
+          type: integer
+        generatedAt:
+          type: string
+          format: date-time
+        scenesUsed:
+          type: array
+          items:
+            type: string
+        sensorsUsed:
+          type: array
+          items:
+            type: string
+        annotationTypes:
+          type: array
+          items:
+            type: string
+            enum: [bounding_box, semantic_segmentation, depth_map, pose]
+        statistics:
+          $ref: '#/components/schemas/DatasetStatistics'
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetFile'
+        status:
+          type: string
+          enum: [generating, completed, failed, archived]
+
+    DatasetStatistics:
+      type: object
+      properties:
+        totalFrames:
+          type: integer
+        duration:
+          type: number
+          format: float
+          description: Duration in seconds
+        objectsCount:
+          type: integer
+        environmentTypes:
+          type: array
+          items:
+            type: string
+        sensorTypes:
+          type: array
+          items:
+            type: string
+
+    DatasetFile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        filepath:
+          type: string
+        fileType:
+          type: string
+          enum: [RGB_IMAGE, DEPTH_MAP, SEGMENTATION_MASK, POSE_DATA, LIDAR_SCAN]
+        associatedAnnotations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnotationFile'
+        sceneMetadata:
+          $ref: '#/components/schemas/SceneMetadata'
+        sensorMetadata:
+          $ref: '#/components/schemas/SensorMetadata'
+
+    AnnotationFile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+        filepath:
+          type: string
+        annotationType:
+          type: string
+          enum: [bounding_box, semantic_segmentation, depth_map, pose]
+
+    SceneMetadata:
+      type: object
+      properties:
+        environmentId:
+          type: string
+        objectPositions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectPosition'
+        lightingConditions:
+          $ref: '#/components/schemas/LightingConfig'
+        weatherConditions:
+          $ref: '#/components/schemas/WeatherConditions'
+        robotPose:
+          $ref: '#/components/schemas/PoseStamped'
+
+    ObjectPosition:
+      type: object
+      properties:
+        objectId:
+          type: string
+        position:
+          $ref: '#/components/schemas/Vector3'
+        rotation:
+          $ref: '#/components/schemas/Quaternion'
+
+    WeatherConditions:
+      type: object
+      properties:
+        temperature:
+          type: number
+          format: float
+        humidity:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 100.0
+        precipitation:
+          type: number
+          format: float
+        windSpeed:
+          type: number
+          format: float
+        windDirection:
+          $ref: '#/components/schemas/Vector3'
+
+    SensorMetadata:
+      type: object
+      properties:
+        sensorId:
+          type: string
+        sensorType:
+          type: string
+        noiseModel:
+          $ref: '#/components/schemas/NoiseModel'
+        configuration:
+          $ref: '#/components/schemas/SensorConfiguration'
+
+    VirtualEnvironmentCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name for the new environment
+        description:
+          type: string
+          description: Description for the new environment
+        physicsProperties:
+          $ref: '#/components/schemas/PhysicsProperties'
+        lightingConfig:
+          $ref: '#/components/schemas/LightingConfig'
+        initialObjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimulatedObject'
+      required:
+        - name
+
+    VirtualEnvironmentUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        physicsProperties:
+          $ref: '#/components/schemas/PhysicsProperties'
+        lightingConfig:
+          $ref: '#/components/schemas/LightingConfig'
+
+    HumanoidRobotCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name for the new robot model
+        urdfPath:
+          type: string
+          description: Path to URDF file describing the robot
+        sdfPath:
+          type: string
+          description: Path to SDF file describing the robot (alternative format)
+        sensors:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimulatedSensor'
+        controllers:
+          $ref: '#/components/schemas/RobotControllers'
+      required:
+        - name
+
+    RobotControllers:
+      type: object
+      properties:
+        balanceController:
+          $ref: '#/components/schemas/BalanceController'
+        locomotionController:
+          $ref: '#/components/schemas/LocomotionController'
+
+    HumanoidRobotUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        urdfPath:
+          type: string
+        sdfPath:
+          type: string
+        sensors:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimulatedSensor'
+        controllers:
+          $ref: '#/components/schemas/RobotControllers'
+
+    RobotSpawnRequest:
+      type: object
+      properties:
+        environmentId:
+          type: string
+          format: uuid
+        startPosition:
+          $ref: '#/components/schemas/Vector3'
+        startOrientation:
+          $ref: '#/components/schemas/Quaternion'
+        sensorConfiguration:
+          type: object
+          additionalProperties: true
+          description: Configuration overrides for specific sensors
+      required:
+        - environmentId
+
+    RobotSpawnResponse:
+      type: object
+      properties:
+        robotInstanceId:
+          type: string
+          format: uuid
+          description: Unique ID of the spawned robot instance
+        status:
+          type: string
+          enum: [success, error]
+        message:
+          type: string
+          description: Additional information about the spawn operation
+
+    NavigationPlanRequest:
+      type: object
+      properties:
+        robotId:
+          type: string
+          format: uuid
+          description: ID of the robot for which to plan navigation
+        start:
+          $ref: '#/components/schemas/Vector3'
+        goal:
+          $ref: '#/components/schemas/Vector3'
+        environmentId:
+          type: string
+          format: uuid
+          description: ID of the environment in which to navigate
+        constraints:
+          $ref: '#/components/schemas/PathConstraints'
+      required:
+        - robotId
+        - start
+        - goal
+
+    NavigationExecuteRequest:
+      type: object
+      properties:
+        planId:
+          type: string
+          format: uuid
+          description: ID of the navigation plan to execute
+        robotId:
+          type: string
+          format: uuid
+          description: ID of the robot to execute the plan
+        executionParams:
+          type: object
+          additionalProperties: true
+          description: Execution-specific parameters
+      required:
+        - planId
+        - robotId
+
+    NavigationExecuteResponse:
+      type: object
+      properties:
+        executionId:
+          type: string
+          format: uuid
+          description: ID of the navigation execution session
+        status:
+          type: string
+          enum: [started, running, completed, failed, cancelled]
+        estimatedTime:
+          type: number
+          format: float
+          description: Estimated time to complete navigation in seconds
+
+    SyntheticDatasetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name for the new dataset
+        description:
+          type: string
+          description: Description of the dataset
+        environmentIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        robotId:
+          type: string
+          format: uuid
+          description: Robot type to use for data collection
+        duration:
+          type: number
+          format: float
+          description: Duration for data collection in seconds
+        sensorTypes:
+          type: array
+          items:
+            type: string
+            enum: [RGB, DEPTH, LIDAR, IMU]
+        annotationTypes:
+          type: array
+          items:
+            type: string
+            enum: [bounding_box, semantic_segmentation, depth_map, pose]
+        sceneVariations:
+          $ref: '#/components/schemas/SceneVariations'
+      required:
+        - name
+        - environmentIds
+        - duration
+
+    SceneVariations:
+      type: object
+      properties:
+        lighting:
+          type: array
+          items:
+            $ref: '#/components/schemas/LightingConfig'
+        objects:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimulatedObject'
+        weather:
+          type: array
+          items:
+            $ref: '#/components/schemas/WeatherConditions'
+
+    SyntheticDatasetResponse:
+      type: object
+      properties:
+        datasetId:
+          type: string
+          format: uuid
+          description: ID of the generated dataset
+        status:
+          type: string
+          enum: [generating, completed, failed]
+        estimatedCompletion:
+          type: string
+          format: date-time
+        progress:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+
+    SensorDataResponse:
+      type: object
+      properties:
+        robotId:
+          type: string
+          format: uuid
+        sensorData:
+          type: array
+          items:
+            $ref: '#/components/schemas/SensorReading'
+        timestamp:
+          type: string
+          format: date-time
+
+    SensorReading:
+      type: object
+      properties:
+        sensorId:
+          type: string
+          format: uuid
+        sensorType:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+          description: Sensor-specific data payload
+        timestamp:
+          type: string
+          format: date-time
+        frameId:
+          type: string
+          description: Coordinate frame of the sensor reading
+
+  parameters:
+    RobotId:
+      name: robotId
+      in: path
+      required: true
+      description: ID of the robot
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InvalidRequest:
+      description: The request data is invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalError:
+      description: An internal server error occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: environments
+    description: Virtual environment management
+  - name: robots
+    description: Humanoid robot model management
+  - name: navigation
+    description: Navigation planning and execution
+  - name: slam
+    description: Simultaneous localization and mapping
+  - name: datasets
+    description: Synthetic dataset generation and management
+  - name: sensors
+    description: Robot sensor data access

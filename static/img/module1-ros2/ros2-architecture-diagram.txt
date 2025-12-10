@@ -1,0 +1,7 @@
+This is a placeholder file for the ROS 2 architecture diagram.
+
+Actual diagram would show:
+- Nodes communicating via topics, services, and actions
+- DDS middleware facilitating communication
+- Publishers and subscribers architecture
+- Service clients and servers
