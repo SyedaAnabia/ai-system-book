@@ -15,6 +15,7 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
+
   // Set the production url of your site here
   url: 'https://github.com/SyedaAnabia',
   // Set the /<baseUrl>/ pathname under which your site is served
@@ -25,8 +26,12 @@ const config: Config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'SyedaAnabia', // Usually your GitHub org/user name.
   projectName: 'ai-systems-book', // Usually your repo name.
+ 
 
+ deploymentBranch: 'gh-pages',
+ trailingSlash: false,
   onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -41,6 +46,7 @@ const config: Config = {
       'classic',
       {
         docs: {
+            routeBasePath: '/',
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
@@ -125,19 +131,7 @@ const config: Config = {
             },
           ],
         },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
-              label: 'GitHub',
-              href: 'https://github.com/SyedaAnabia',
-            },
-          ],
-        },
+        
       ],
       copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
     },
