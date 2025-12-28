@@ -3,7 +3,6 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import FloatingChatbot from '../components/HomepageFeatures/FloatingChatbot';
 import Translator from '../components/Translator';
 
-// Browser mein window se load hoga, SSG ke time undefined hoga
 const getClerkKey = () => {
   if (typeof window !== 'undefined') {
     return (window as any).CLERK_PUBLISHABLE_KEY;
@@ -14,12 +13,11 @@ const getClerkKey = () => {
 export default function Root({ children }: { children: React.ReactNode }) {
   const clerkKey = getClerkKey();
 
-  // SSG time (server-side) - bina Clerk ke render karo
+
   if (typeof window === 'undefined') {
     return <>{children}</>;
   }
 
-  // Browser mein - agar key nahi hai toh warning do aur bina auth ke chalao
   if (!clerkKey) {
     console.warn('⚠️ Clerk key not found. Add it to static/env.js');
     return (
@@ -44,7 +42,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Browser mein with Clerk
+
   return (
     <ClerkProvider publishableKey={clerkKey}>
       {children}
