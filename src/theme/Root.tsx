@@ -6,7 +6,7 @@ import Translator from '../components/Translator';
 
 export default function Root({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider publishableKey="pk_test_Z3JhdGVmdWwtbmFyd2hhbC02My5jbGVyay5hY2NvdW50cy5kZXYk">
+     <ClerkProvider publishableKey={process.env.CLERK_PUBLISHABLE_KEY!}>
       {children}
 
      <div
