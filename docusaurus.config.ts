@@ -14,10 +14,10 @@ const config: Config = {
   },
 
   url: 'https://SyedaAnabia.github.io',
-  baseUrl: '/ai-systems-book/',
+  baseUrl: '/ai-system-book/',
 
   organizationName: 'SyedaAnabia',
-  projectName: 'ai-systems-book',
+  projectName: 'ai-system-book',
 
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
