@@ -23,7 +23,7 @@ const config: Config = {
     locales: ['en'],
   },
 
-  // ✅ YEH ADD KARO - env.js ko load karega
+ 
   scripts: [
     {
       src: '/ai-system-book/env.js',
