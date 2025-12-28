@@ -5,7 +5,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
-import FloatingChatbot from "../components/FloatingChatbot";
+import FloatingChatbot from "../components/HomepageFeatures/FloatingChatbot";
 
 
 import styles from './index.module.css';

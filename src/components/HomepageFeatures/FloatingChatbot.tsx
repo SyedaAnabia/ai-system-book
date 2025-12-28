@@ -6,12 +6,17 @@ interface Message {
   timestamp: Date;
 }
 
+const API_BASE_URL = 'http://localhost:8000';
+
 const FloatingChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [hasGreeted, setHasGreeted] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [userId] = useState<number>(1); // Replace with actual user ID from auth
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -25,7 +30,7 @@ const FloatingChatbot: React.FC = () => {
   useEffect(() => {
     if (isOpen && !hasGreeted) {
       setMessages([{
-        text: "Hello! 👋 Welcome to the Physical AI & Humanoid Robotics course. I'm your AI assistant. How can I help you today?",
+        text: "Hello! 👋 Welcome to the Physical AI & Humanoid Robotics course. I'm your AI assistant powered by RAG (Retrieval Augmented Generation). I can answer questions based on the complete course book. How can I help you today?",
         isUser: false,
         timestamp: new Date()
       }]);
@@ -33,205 +38,7 @@ const FloatingChatbot: React.FC = () => {
     }
   }, [isOpen, hasGreeted]);
 
-  const getSmartResponse = (userMessage: string): string => {
-    const msg = userMessage.toLowerCase().trim();
-
-    // Simple greetings
-    if (msg === 'hi' || msg === 'hello' || msg === 'hey' || msg === 'hi!' || msg === 'hello!') {
-      return "Hi! 👋 How can I assist you today?";
-    }
-
-    if (msg.includes('how are you') || msg.includes('what\'s up') || msg.includes('whats up')) {
-      return "I'm doing great, thank you for asking! How can I help you with the course today?";
-    }
-
-    // Course/Module questions
-    if (msg.includes('module 1') || msg.includes('module one') || msg.match(/\bmodule\s*1\b/)) {
-      return "📘 **Module 1: Introduction to Physical AI & Humanoid Robotics**\n\n" +
-        "- Overview of Physical AI: what it is and where it's used.\n" +
-        "- Humanoid robot architecture: sensors, actuators, controllers.\n" +
-        "- Basic electronics and embedded components.\n" +
-        "- Safety, ethics, and system-level thinking.\n\n" +
-        "Would you like more details about Module 1?";
-    }
-
-    if (msg.includes('module 2') || msg.includes('module two') || msg.match(/\bmodule\s*2\b/)) {
-      return "📘 **Module 2: ROS (Robot Operating System) Fundamentals**\n\n" +
-        "- ROS architecture: nodes, topics, services and actions.\n" +
-        "- Writing & running simple ROS nodes.\n" +
-        "- Interfacing sensors and actuators.\n" +
-        "- Simulation with Gazebo and visualizing in RViz.\n\n" +
-        "Module 2 includes practical examples and starter templates!";
-    }
-
-    if (msg.includes('module 3') || msg.includes('module three') || msg.match(/\bmodule\s*3\b/)) {
-      return "📘 **Module 3: Computer Vision & Perception**\n\n" +
-        "- Camera basics, calibration, and image preprocessing.\n" +
-        "- Object detection & recognition (classical + ML methods).\n" +
-        "- Using OpenCV and integrating pretrained models.\n" +
-        "- Sensor fusion (camera + IMU / LIDAR) basics.";
-    }
-
-    if (msg.includes('module 4') || msg.includes('module four') || msg.match(/\bmodule\s*4\b/)) {
-      return "📘 **Module 4: Motion Planning & Control**\n\n" +
-        "- Forward/inverse kinematics and robot dynamics overview.\n" +
-        "- Path planning algorithms (A*, RRT, PRM) and their tradeoffs.\n" +
-        "- Control systems: PID, state-feedback, and basic trajectory tracking.\n" +
-        "- Sim-to-real tips using Gazebo/Unity.";
-    }
-
-    if (msg.includes('module 5') || msg.includes('module five') || msg.match(/\bmodule\s*5\b/)) {
-      return "📘 **Module 5: Deep Learning for Robotics**\n\n" +
-        "- Neural networks basics and architectures useful for robotics.\n" +
-        "- Using CNNs for perception, RNNs for sequences, and RL basics for control.\n" +
-        "- Transfer learning and model deployment on edge devices.";
-    }
-
-    if (msg.includes('module 6') || msg.includes('module six') || msg.match(/\bmodule\s*6\b/)) {
-      return "📘 **Module 6: Building Your First Humanoid**\n\n" +
-        "- Mechanical design choices and trade-offs.\n" +
-        "- Electronics: power, motor drivers, and sensors.\n" +
-        "- Software integration: combining perception, planning, control.\n" +
-        "- Testing, debugging and iteration cycle for humanoid builds.";
-    }
-
-    if (msg.includes('modules') || msg.includes('syllabus') || msg.includes('curriculum') || msg.includes('all modules')) {
-      return "📚 **Course Modules Overview:**\n\n" +
-        "**Module 1:** Introduction to Physical AI & Humanoid Robotics\n" +
-        "**Module 2:** ROS (Robot Operating System) Fundamentals\n" +
-        "**Module 3:** Computer Vision & Perception\n" +
-        "**Module 4:** Motion Planning & Control\n" +
-        "**Module 5:** Deep Learning for Robotics\n" +
-        "**Module 6:** Building Your First Humanoid\n\n" +
-        "Which module would you like to know more about?";
-    }
-
-    // Website-related questions
-    if (msg.includes('website') || msg.includes('site')) {
-      return "🌐 **About Our Website:**\n\n" +
-        "Our website offers:\n" +
-        "- Complete course curriculum and modules\n" +
-        "- Interactive learning materials\n" +
-        "- Registration for the Physical AI & Humanoid Robotics course\n" +
-        "- Resources and documentation\n" +
-        "- Community support\n\n" +
-        "What specific information about the website would you like to know?";
-    }
-
-    if (msg.includes('register') || msg.includes('registration') || msg.includes('sign up') || msg.includes('enroll')) {
-      return "📝 **Course Registration:**\n\n" +
-        "To register for the Physical AI & Humanoid Robotics course:\n" +
-        "1. Click on the 'Register' or 'Sign Up' button on the homepage\n" +
-        "2. Fill in your details (name, email, etc.)\n" +
-        "3. Choose your preferred payment plan\n" +
-        "4. Complete the registration process\n\n" +
-        "Once registered, you'll get immediate access to all course materials!";
-    }
-
-    if (msg.includes('login') || msg.includes('log in') || msg.includes('signin') || msg.includes('sign in')) {
-      return "🔐 **Login Information:**\n\n" +
-        "To access your account:\n" +
-        "1. Click the 'Login' button on the homepage\n" +
-        "2. Enter your registered email and password\n" +
-        "3. Access your course dashboard\n\n" +
-        "Forgot your password? Use the 'Reset Password' link on the login page.";
-    }
-
-    if (msg.includes('price') || msg.includes('cost') || msg.includes('fee') || msg.includes('payment')) {
-      return "💰 **Course Pricing:**\n\n" +
-        "We offer flexible pricing options for the Physical AI & Humanoid Robotics course:\n" +
-        "- One-time payment: Full course access\n" +
-        "- Monthly installments: Split payment option\n" +
-        "- Early bird discounts: Available for limited time\n\n" +
-        "Visit our pricing page for current rates and special offers!";
-    }
-
-    if (msg.includes('contact') || msg.includes('support') || msg.includes('help desk')) {
-      return "📞 **Contact & Support:**\n\n" +
-        "Need assistance? Reach us at:\n" +
-        "- Email: support@physicalai-course.com\n" +
-        "- Live Chat: Available on website\n" +
-        "- Support Hours: Mon-Fri, 9 AM - 6 PM\n\n" +
-        "You can also use this chatbot for instant answers!";
-    }
-
-    if (msg.includes('certificate') || msg.includes('certification')) {
-      return "🎓 **Course Certificate:**\n\n" +
-        "Upon successful completion of the Physical AI & Humanoid Robotics course, you will receive:\n" +
-        "- Official course completion certificate\n" +
-        "- Verifiable credentials\n" +
-        "- LinkedIn-ready certificate\n\n" +
-        "Complete all 6 modules and pass the final project to earn your certificate!";
-    }
-
-    if (msg.includes('duration') || msg.includes('how long') || msg.includes('time required')) {
-      return "⏱️ **Course Duration:**\n\n" +
-        "The Physical AI & Humanoid Robotics course is self-paced:\n" +
-        "- Estimated time: 8-12 weeks (at 10-15 hours/week)\n" +
-        "- Flexible schedule: Learn at your own pace\n" +
-        "- Lifetime access: Revisit materials anytime\n\n" +
-        "You can complete it faster or slower based on your schedule!";
-    }
-
-    if (msg.includes('prerequisite') || msg.includes('requirements') || msg.includes('beginner')) {
-      return "📋 **Course Prerequisites:**\n\n" +
-        "Recommended background:\n" +
-        "- Basic programming knowledge (Python preferred)\n" +
-        "- Understanding of basic math and physics\n" +
-        "- Enthusiasm for robotics!\n\n" +
-        "Don't worry if you're a beginner - we start from the fundamentals and build up gradually!";
-    }
-
-    if (msg.includes('instructor') || msg.includes('teacher') || msg.includes('who teaches')) {
-      return "👨‍🏫 **Course Instructors:**\n\n" +
-        "Learn from industry experts with:\n" +
-        "- Years of experience in robotics and AI\n" +
-        "- Real-world project expertise\n" +
-        "- Academic and industry backgrounds\n\n" +
-        "Our instructors are passionate about making robotics accessible to everyone!";
-    }
-
-    if (msg.includes('project') || msg.includes('hands-on') || msg.includes('practical')) {
-      return "🛠️ **Hands-on Projects:**\n\n" +
-        "The course includes multiple practical projects:\n" +
-        "- Module-specific mini-projects\n" +
-        "- Final capstone project: Build your own humanoid robot\n" +
-        "- Simulations and real-world implementations\n" +
-        "- Code examples and starter templates\n\n" +
-        "Learning by doing is at the core of our curriculum!";
-    }
-
-    if (msg.includes('video') || msg.includes('lectures') || msg.includes('tutorial')) {
-      return "🎥 **Course Content Format:**\n\n" +
-        "Our course includes:\n" +
-        "- Video lectures and tutorials\n" +
-        "- Written documentation and guides\n" +
-        "- Code repositories and examples\n" +
-        "- Interactive exercises\n" +
-        "- Downloadable resources\n\n" +
-        "Multiple formats to suit different learning styles!";
-    }
-
-    if (msg.includes('community') || msg.includes('forum') || msg.includes('discussion')) {
-      return "👥 **Community & Support:**\n\n" +
-        "Join our vibrant learning community:\n" +
-        "- Student discussion forums\n" +
-        "- Peer collaboration opportunities\n" +
-        "- Regular Q&A sessions\n" +
-        "- Project showcases\n\n" +
-        "Connect with fellow students and learn together!";
-    }
-
-    // Default response for unmatched queries
-    return "I'm here to help you with:\n\n" +
-      "📚 **Course Information:** Modules, curriculum, content\n" +
-      "🌐 **Website:** Registration, login, pricing\n" +
-      "🎓 **Learning:** Prerequisites, duration, certificates\n" +
-      "💬 **Support:** Contact info, community, help\n\n" +
-      "What would you like to know more about?";
-  };
-
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
     const userMessage: Message = {
@@ -244,18 +51,60 @@ const FloatingChatbot: React.FC = () => {
     const messageText = inputValue;
     setInputValue('');
     setIsLoading(true);
+    setError(null);
 
-    setTimeout(() => {
-      const response = getSmartResponse(messageText);
+    try {
+      // Call backend API with RAG
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: messageText,
+          conversation_id: conversationId,
+          user_id: userId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Update conversation ID if new
+      if (data.conversation_id && !conversationId) {
+        setConversationId(data.conversation_id);
+      }
+
+      // Add bot response
       const botMessage: Message = {
-        text: response,
+        text: data.response,
         isUser: false,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, botMessage]);
+
+      // Optional: Show which model was used
+      console.log('Model used:', data.model);
+      console.log('Context found:', data.context_found);
+
+    } catch (error) {
+      console.error('Chat error:', error);
+      
+      const errorMessage: Message = {
+        text: "Sorry, I'm having trouble connecting to the server right now. Please make sure the backend is running on http://localhost:8000. You can try again in a moment.",
+        isUser: false,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+      setError(error.message);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -332,6 +181,12 @@ const FloatingChatbot: React.FC = () => {
 
         .chat-header-info {
           display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .chat-header-title {
+          display: flex;
           align-items: center;
           gap: 8px;
         }
@@ -346,13 +201,13 @@ const FloatingChatbot: React.FC = () => {
           width: 8px;
           height: 8px;
           background: #4ade80;
-          borderRadius: 50%;
+          border-radius: 50%;
           animation: pulse 2s infinite;
         }
 
         .status-text {
-          font-size: 12px;
-          opacity: 0.9;
+          font-size: 11px;
+          opacity: 0.85;
         }
 
         @keyframes pulse {
@@ -548,6 +403,18 @@ const FloatingChatbot: React.FC = () => {
           cursor: not-allowed;
         }
 
+        .error-badge {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: #ef4444;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 6px;
+          font-size: 10px;
+          font-weight: 600;
+        }
+
         @media (max-width: 480px) {
           .chat-window {
             width: calc(100vw - 32px);
@@ -583,9 +450,11 @@ const FloatingChatbot: React.FC = () => {
       <div className={`chat-window ${isOpen ? 'open' : ''}`}>
         <div className="chat-header">
           <div className="chat-header-info">
-            <h3>AI Assistant</h3>
-            <span className="status-indicator"></span>
-            <span className="status-text">Online</span>
+            <div className="chat-header-title">
+              <h3>AI Assistant</h3>
+              <span className="status-indicator"></span>
+            </div>
+            <span className="status-text">RAG-Powered • Groq LLM + Qdrant</span>
           </div>
           <button
             className="close-btn"
@@ -632,7 +501,7 @@ const FloatingChatbot: React.FC = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type your message..."
+            placeholder="Ask about the Physical AI course..."
           />
           <button
             className="send-btn"
