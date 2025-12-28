@@ -105,11 +105,7 @@ Physical AI represents the convergence of artificial intelligence, robotics, and
 
 ## Next Steps
 
-Ready to begin? Start with [Module 1: The Robotic Nervous System](./module-1/intro.md) to learn about ROS 2, the middleware that powers modern robotics.
-
-For hardware setup guidance, see the [Hardware Requirements Guide](./resources/hardware-setup.md).
-
-To understand the course philosophy and learning outcomes, visit [About This Course](./about/course-overview.md).
+Ready to begin? Start with [Module 1: The Robotic Nervous System](./module1/chapter1-intro-ros2-architecture.md) to learn about ROS 2, the middleware that powers modern robotics.
 
 ---
 
