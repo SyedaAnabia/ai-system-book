@@ -1,0 +1,46 @@
+[33m262fdf1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m resolve env.js merge conflict
+[33m78ac681[m merge remote and local
+[33m203f40a[m Update Root.tsx
+[33m00f710f[m Create env.js
+[33m94bcae8[m Delete static/env.js
+[33m6775081[m Update docusaurus.config.ts
+[33mebfae87[m Update env.js
+[33mcbbb634[m Update docusaurus.config.ts
+[33m400058f[m Update Root.tsx
+[33m95c3883[m Update Root.tsx
+[33me2dac9c[m Update env.js
+[33md1c6ca7[m Update docusaurus.config.ts
+[33mfc7cc9d[m Update docusaurus.config.ts
+[33me3239ea[m Create env.js
+[33m62f9d3e[m Update Root.tsx
+[33m313228d[m Update Root.tsx
+[33mb2715b0[m Update deploy.yml
+[33m1322bfd[m Update deploy.yml
+[33maf98aa3[m Update deploy.yml
+[33m81d92f7[m Update README with project documentation
+[33m3340c9f[m Update for Github Pages deployment
+[33m3da10dc[m Fix: Add CLERK_PUBLISHABLE_KEY to env and fix broken docs links
+[33mc130223[m Update for Github Pages deployment
+[33m78997db[m Add Clerk env variable to deployment
+[33m1b0e373[m Update to latest GitHub Actions versions
+[33ma6bb6fd[m Fix deployment workflow
+[33m9dc5333[m Initialize gh-pages
+[33m871b111[m Add Clerk publishable key to build step
+[33m41b4058[m Update deploy.yml
+[33maf800f1[m first commit
+[33m673df25[m first commit
+[33m6432dc0[m first commit
+[33mbfabfa5[m first commit
+[33m30b3129[m Regenerate lock file for Node 20
+[33mde4ed15[m Update Node.js version
+[33mff7f55a[m Trigger deployment
+[33m1faf345[m Add GitHub Actions workflow for deployment
+[33m14148a9[m first commit
+[33mec29aa4[m first commit
+[33mc8011a6[m Fix baseUrl for GitHub Pages
+[33mf2ca7b9[m Update README.md
+[33mf50cb7b[m Update docusaurus.config.ts
+[33m77935a8[m Update README.md
+[33mab4e17c[m Remove .env file and add to .gitignore
+[33m63e75c3[m first commit
+[33me61f5a4[m[33m ([m[1;32m006-isaac-sim-photorealistic[m[33m, [m[1;32m005-module3-ai-robot[m[33m)[m Initial commit: Docusaurus project setup
