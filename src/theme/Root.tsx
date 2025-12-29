@@ -7,10 +7,13 @@ export default function Root({ children }: { children: React.ReactNode }) {
   return (
     <BrowserOnly>
       {() => {
-        const { ClerkProvider } = require('@clerk/clerk-react');
+        const ClerkProvider =
+          require('@clerk/clerk-react').ClerkProvider;
 
         return (
-          <ClerkProvider publishableKey="pk_test_Z3JhdGVmdWwtbmFyd2hhbC02My5jbGVyay5hY2NvdW50cy5kZXYk">
+          <ClerkProvider
+            publishableKey="pk_test_Z3JhdGVmdWwtbmFyd2hhbC02My5jbGVyay5hY2NvdW50cy5kZXYk"
+          >
             {children}
 
             <div
