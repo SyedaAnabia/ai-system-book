@@ -6,7 +6,7 @@ interface Message {
   timestamp: Date;
 }
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
 
 const FloatingChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,7 +72,7 @@ const FloatingChatbot: React.FC = () => {
       }
 
       const data = await response.json();
-      
+
       // Update conversation ID if new
       if (data.conversation_id && !conversationId) {
         setConversationId(data.conversation_id);
@@ -93,13 +93,13 @@ const FloatingChatbot: React.FC = () => {
 
     } catch (error) {
       console.error('Chat error:', error);
-      
+
       const errorMessage: Message = {
         text: "Sorry, I'm having trouble connecting to the server right now. Please make sure the backend is running on http://localhost:8000. You can try again in a moment.",
         isUser: false,
         timestamp: new Date()
       };
-      
+
       setMessages(prev => [...prev, errorMessage]);
       setError(error.message);
     } finally {
@@ -475,9 +475,9 @@ const FloatingChatbot: React.FC = () => {
                 {message.text}
               </div>
               <div className="message-timestamp">
-                {message.timestamp.toLocaleTimeString([], { 
-                  hour: '2-digit', 
-                  minute: '2-digit' 
+                {message.timestamp.toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit'
                 })}
               </div>
             </div>

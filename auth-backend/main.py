@@ -33,25 +33,25 @@ COLLECTION_NAME = "physical_ai_book"
 async def lifespan(app: FastAPI):
     # Startup
     global qdrant_client, embedding_model
-    
+
     print("🚀 Starting up...")
-    
+
     # Initialize Qdrant Client
     qdrant_client = QdrantClient(
         url=QDRANT_URL,
         api_key=QDRANT_API_KEY,
         timeout=30
     )
-    
+
     # Initialize Sentence Transformer
     print("📥 Loading embedding model...")
     embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-    
+
     # Create collection if not exists
     try:
         collections = qdrant_client.get_collections().collections
         collection_exists = any(col.name == COLLECTION_NAME for col in collections)
-        
+
         if not collection_exists:
             qdrant_client.create_collection(
                 collection_name=COLLECTION_NAME,
@@ -65,11 +65,11 @@ async def lifespan(app: FastAPI):
             print(f"✅ Collection {COLLECTION_NAME} already exists")
     except Exception as e:
         print(f"⚠️ Qdrant initialization warning: {str(e)}")
-    
+
     print("✅ Startup complete!")
-    
+
     yield
-    
+
     # Shutdown
     print("👋 Shutting down...")
 
@@ -134,7 +134,7 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> List[str]
     while start < len(text):
         end = start + chunk_size
         chunk = text[start:end]
-        
+
         if end < len(text):
             last_period = chunk.rfind('.')
             last_newline = chunk.rfind('\n')
@@ -142,10 +142,10 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> List[str]
             if break_point > chunk_size * 0.5:
                 chunk = chunk[:break_point + 1]
                 end = start + break_point + 1
-        
+
         chunks.append(chunk.strip())
         start = end - overlap
-    
+
     return [c for c in chunks if len(c) > 50]
 
 async def retrieve_context(query: str, top_k: int = 5) -> str:
@@ -153,7 +153,7 @@ async def retrieve_context(query: str, top_k: int = 5) -> str:
     try:
         # Generate query embedding
         query_vector = embedding_model.encode(query).tolist()
-        
+
         # Search in Qdrant (updated method)
         search_results = qdrant_client.query_points(
             collection_name=COLLECTION_NAME,
@@ -161,10 +161,10 @@ async def retrieve_context(query: str, top_k: int = 5) -> str:
             limit=top_k,
             score_threshold=0.3
         ).points
-        
+
         if not search_results:
             return "No relevant context found in the book."
-        
+
         # Combine contexts with scores
         contexts = []
         for result in search_results:
@@ -172,9 +172,9 @@ async def retrieve_context(query: str, top_k: int = 5) -> str:
             text = result.payload.get('text', '')
             source = result.payload.get('source', 'Unknown')
             contexts.append(f"[Source: {source} | Relevance: {score:.2f}]\n{text}")
-        
+
         return "\n\n---\n\n".join(contexts)
-    
+
     except Exception as e:
         print(f"⚠️ Retrieval error: {str(e)}")
         return "Error retrieving context from knowledge base."
@@ -191,7 +191,7 @@ async def root():
                 vector_count = collection_info.points_count
     except:
         vector_count = 0
-    
+
     return {
         "message": "Physical AI Course API - RAG Enabled 🚀",
         "version": "2.0",
@@ -213,17 +213,17 @@ async def register(user: UserRegistration):
     try:
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        
+
         cur.execute("SELECT id FROM users WHERE email = %s", (user.email,))
         if cur.fetchone():
             raise HTTPException(status_code=400, detail="Email already registered")
-        
+
         hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt())
-        
+
         cur.execute("""
             INSERT INTO users (
-                name, email, password, software_experience, 
-                programming_languages, has_gpu, gpu_type, 
+                name, email, password, software_experience,
+                programming_languages, has_gpu, gpu_type,
                 ros_experience, robotics_projects, robotics_details,
                 learning_goals, hardware_access, created_at
             )
@@ -243,10 +243,10 @@ async def register(user: UserRegistration):
             user.learningGoals,
             json.dumps(user.hardwareAccess)
         ))
-        
+
         new_user = cur.fetchone()
         conn.commit()
-        
+
         return {
             "message": "Registration successful! 🎉",
             "user": {
@@ -255,7 +255,7 @@ async def register(user: UserRegistration):
                 "email": new_user['email']
             }
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -275,21 +275,21 @@ async def login(credentials: UserLogin):
     try:
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        
+
         cur.execute("""
-            SELECT id, name, email, password, software_experience, 
+            SELECT id, name, email, password, software_experience,
                    programming_languages, has_gpu, gpu_type, ros_experience
             FROM users WHERE email = %s
         """, (credentials.email,))
-        
+
         user = cur.fetchone()
-        
+
         if not user:
             raise HTTPException(status_code=401, detail="Invalid email or password")
-        
+
         if not bcrypt.checkpw(credentials.password.encode('utf-8'), user['password'].encode('utf-8')):
             raise HTTPException(status_code=401, detail="Invalid email or password")
-        
+
         return {
             "message": "Login successful! ✅",
             "user": {
@@ -303,7 +303,7 @@ async def login(credentials: UserLogin):
                 "rosExperience": user['ros_experience']
             }
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -320,10 +320,10 @@ async def chat(message: ChatMessage):
     try:
         if not GROQ_API_KEY:
             raise HTTPException(status_code=500, detail="Groq API key not configured")
-        
+
         # 🎯 RETRIEVE relevant context from Qdrant
         context = await retrieve_context(message.message, top_k=5)
-        
+
         # 🤖 GENERATE response using Groq
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -362,17 +362,17 @@ Guidelines:
                 },
                 timeout=30.0
             )
-            
+
             if response.status_code != 200:
                 raise HTTPException(status_code=500, detail=f"Groq API error: {response.text}")
-            
+
             result = response.json()
             ai_response = result['choices'][0]['message']['content']
-        
+
         # Save to database
         conn = get_db_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        
+
         if not message.conversation_id:
             cur.execute("""
                 INSERT INTO conversations (user_id, conversation_id, created_at)
@@ -383,30 +383,30 @@ Guidelines:
             conversation_id = conv['conversation_id']
         else:
             conversation_id = message.conversation_id
-        
+
         cur.execute("""
             INSERT INTO messages (conversation_id, role, content, created_at)
             SELECT c.id, 'user', %s, NOW()
             FROM conversations c WHERE c.conversation_id = %s
         """, (message.message, conversation_id))
-        
+
         cur.execute("""
             INSERT INTO messages (conversation_id, role, content, created_at)
             SELECT c.id, 'assistant', %s, NOW()
             FROM conversations c WHERE c.conversation_id = %s
         """, (ai_response, conversation_id))
-        
+
         conn.commit()
         cur.close()
         conn.close()
-        
+
         return {
             "response": ai_response,
             "conversation_id": conversation_id,
             "model": "llama-3.3-70b-versatile (Groq)",  # ✅ Updated model name
             "context_found": "No relevant" not in context
         }
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
 
@@ -416,12 +416,12 @@ async def upload_document(doc: DocumentUpload):
     try:
         # Chunk the text
         chunks = chunk_text(doc.text, chunk_size=500, overlap=50)
-        
+
         # Generate embeddings and upload to Qdrant
         points = []
         for i, chunk in enumerate(chunks):
             embedding = embedding_model.encode(chunk).tolist()
-            
+
             point = PointStruct(
                 id=str(uuid.uuid4()),
                 vector=embedding,
@@ -432,19 +432,19 @@ async def upload_document(doc: DocumentUpload):
                 }
             )
             points.append(point)
-        
+
         # Upload to Qdrant
         qdrant_client.upsert(
             collection_name=COLLECTION_NAME,
             points=points
         )
-        
+
         return {
             "message": "Document indexed successfully! ✅",
             "chunks_created": len(chunks),
             "collection": COLLECTION_NAME
         }
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
@@ -472,7 +472,7 @@ async def health():
         qdrant_status = "connected"
     except:
         qdrant_status = "disconnected"
-    
+
     return {
         "status": "healthy",
         "database": "connected",
@@ -483,4 +483,5 @@ async def health():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
