@@ -2,34 +2,33 @@ import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
+// This runs in Node.js - Don't use client-side code here
+
 const config: Config = {
   title: 'Physical AI & Humanoid Robotics',
   tagline: 'Embodied Intelligence - From Digital Brain to Physical Body',
   favicon: 'img/favicon.ico',
+
   future: {
     v4: true,
   },
+
   url: 'https://SyedaAnabia.github.io',
   baseUrl: '/ai-system-book/',
+
   organizationName: 'SyedaAnabia',
   projectName: 'ai-system-book',
+
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
+
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
   },
-
- 
-  scripts: [
-    {
-      src: '/ai-system-book/env.js',
-      async: false,
-    },
-  ],
 
   presets: [
     [
@@ -56,6 +55,7 @@ const config: Config = {
     colorMode: {
       respectPrefersColorScheme: true,
     },
+
     navbar: {
       title: 'Physical AI & Humanoid Robotics',
       logo: {
@@ -69,11 +69,14 @@ const config: Config = {
           position: 'left',
           label: 'Tutorial',
         },
+
+        // ✅ LOGIN PAGE
         {
           to: '/login',
           label: 'Login',
           position: 'right',
         },
+
         {
           href: 'https://github.com/SyedaAnabia',
           label: 'GitHub',
@@ -81,6 +84,7 @@ const config: Config = {
         },
       ],
     },
+
     footer: {
       style: 'dark',
       links: [
@@ -96,6 +100,7 @@ const config: Config = {
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Physical AI Book`,
     },
+
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
