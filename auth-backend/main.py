@@ -364,41 +364,60 @@ Guidelines:
             )
 
             if response.status_code != 200:
+                print(f"Groq API error: {response.status_code} - {response.text}")  # Log the error
                 raise HTTPException(status_code=500, detail=f"Groq API error: {response.text}")
 
             result = response.json()
+
+            # Check if the expected structure exists
+            if 'choices' not in result or not result['choices']:
+                print(f"Unexpected Groq response structure: {result}")
+                raise HTTPException(status_code=500, detail="Unexpected response from Groq API")
+
             ai_response = result['choices'][0]['message']['content']
 
-        # Save to database
-        conn = get_db_connection()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-
+        # Generate conversation ID if not provided
         if not message.conversation_id:
-            cur.execute("""
-                INSERT INTO conversations (user_id, conversation_id, created_at)
-                VALUES (%s, %s, NOW())
-                RETURNING id, conversation_id
-            """, (message.user_id, f"conv_{message.user_id}_{uuid.uuid4().hex[:8]}"))
-            conv = cur.fetchone()
-            conversation_id = conv['conversation_id']
+            conversation_id = f"conv_{message.user_id}_{uuid.uuid4().hex[:8]}" if message.user_id else f"conv_{uuid.uuid4().hex[:8]}"
         else:
             conversation_id = message.conversation_id
 
-        cur.execute("""
-            INSERT INTO messages (conversation_id, role, content, created_at)
-            SELECT c.id, 'user', %s, NOW()
-            FROM conversations c WHERE c.conversation_id = %s
-        """, (message.message, conversation_id))
+        # Try to save to database, but don't fail if database is unavailable
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor(cursor_factory=RealDictCursor)
 
-        cur.execute("""
-            INSERT INTO messages (conversation_id, role, content, created_at)
-            SELECT c.id, 'assistant', %s, NOW()
-            FROM conversations c WHERE c.conversation_id = %s
-        """, (ai_response, conversation_id))
+            # Create conversation if it doesn't exist
+            if not message.conversation_id:
+                cur.execute("""
+                    INSERT INTO conversations (user_id, conversation_id, created_at)
+                    VALUES (%s, %s, NOW())
+                    RETURNING id, conversation_id
+                """, (message.user_id, conversation_id))
+                conv = cur.fetchone()
+                conversation_id = conv['conversation_id']
+            else:
+                conversation_id = message.conversation_id
 
-        conn.commit()
-        cur.close()
-        conn.close()
+            # Insert messages
+            cur.execute("""
+                INSERT INTO messages (conversation_id, role, content, created_at)
+                SELECT c.id, 'user', %s, NOW()
+                FROM conversations c WHERE c.conversation_id = %s
+            """, (message.message, conversation_id))
+
+            cur.execute("""
+                INSERT INTO messages (conversation_id, role, content, created_at)
+                SELECT c.id, 'assistant', %s, NOW()
+                FROM conversations c WHERE c.conversation_id = %s
+            """, (ai_response, conversation_id))
+
+            conn.commit()
+            cur.close()
+            conn.close()
+        except Exception as db_error:
+            print(f"Database error (non-fatal): {str(db_error)}")
+            # Continue without saving to database
 
         return {
             "response": ai_response,
@@ -407,7 +426,10 @@ Guidelines:
             "context_found": "No relevant" not in context
         }
 
+    except HTTPException:
+        raise  # Re-raise HTTP exceptions
     except Exception as e:
+        print(f"Chat endpoint error: {str(e)}")  # Log the error
         raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
 
 @app.post("/api/documents/upload")

@@ -6,7 +6,10 @@ interface Message {
   timestamp: Date;
 }
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+// Fixed: Use window object instead of process.env for Docusaurus
+const API_BASE_URL = typeof window !== 'undefined' && (window as any).ENV_API_BASE_URL 
+  ? (window as any).ENV_API_BASE_URL 
+  : 'http://localhost:8000';
 
 const FloatingChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
