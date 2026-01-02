@@ -10,7 +10,7 @@ interface Message {
 const API_BASE_URL = typeof window !== 'undefined' && (window as any).ENV_API_BASE_URL
   ? (window as any).ENV_API_BASE_URL
   : (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-      ? 'https://ai-system-book-backend.onrender.com' // Replace with your actual deployed URL
+      ? 'https://ai-system-book-backend.onrender.com' // Replace with your actual deployed backend URL
       : 'http://localhost:8000');
 
 const FloatingChatbot: React.FC = () => {
