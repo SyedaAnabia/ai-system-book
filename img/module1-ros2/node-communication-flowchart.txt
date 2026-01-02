@@ -1,0 +1,7 @@
+This is a placeholder file for the node communication flowchart.
+
+Actual diagram would show:
+- Publisher node sending messages
+- DDS middleware routing messages
+- Subscriber nodes receiving messages
+- Communication patterns and data flow

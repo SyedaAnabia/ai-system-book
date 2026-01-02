@@ -1,0 +1,40 @@
+# Do not publish local development configuration
+.env*
+.env*local*
+
+# Do not publish test or documentation directories
+node_modules/
+coverage/
+docs/
+tests/
+test/
+__tests__/
+spec/
+
+# Do not publish git-specific files
+.git/
+.gitignore
+
+# Do not publish editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Do not publish OS-specific files
+.DS_Store
+Thumbs.db
+
+# Do not publish build artifacts
+dist/
+build/
+*.log
+npm-debug.log*
+
+# Isaac Sim specific files
+isaac-sim/
+isaac-sim-*
+*.usd*
+*.usda
+*.usdc
