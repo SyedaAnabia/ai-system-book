@@ -85,8 +85,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:3001",
-        "https://yourdomain.github.io",
-        "https://ai-system-book.github.io"  # Add your actual GitHub Pages URL
+        "https://syedaanabia.github.io",  # Your GitHub Pages domain
+        "https://ai-system-book-gi5z.vercel.app",  # Vercel deployment
+        "https://syeda204-rag-chatbot-deploy.hf.space"  # Your Hugging Face Space
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -510,5 +511,5 @@ if __name__ == "__main__":
     import uvicorn
     import os
     # Hugging Face PORT environment variable khud deta hai, default 7860 rakhein
-    port = int(os.getenv("PORT", 7860)) 
+    port = int(os.getenv("PORT", 7860))
     uvicorn.run(app, host="0.0.0.0", port=port)
