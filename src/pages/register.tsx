@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "@docusaurus/router";
+import Link from '@docusaurus/Link';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -18,7 +18,6 @@ export default function Register() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -72,8 +71,8 @@ export default function Register() {
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", "dummy-token");
 
-        // Redirect to home page or dashboard
-        navigate("/");
+        // Redirect to home page or dashboard using window.location
+        window.location.href = "/";
       } else {
         setError(data.detail || "Registration failed. Please try again.");
       }

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "@docusaurus/router";
+import Link from '@docusaurus/Link';
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,8 +28,8 @@ export default function Login() {
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", "dummy-token"); // In a real app, you'd use the actual token from the backend
 
-        // Redirect to home page or dashboard
-        navigate("/");
+        // Redirect to home page or dashboard using window.location
+        window.location.href = "/";
       } else {
         setError(data.detail || "Login failed. Please check your credentials.");
       }
