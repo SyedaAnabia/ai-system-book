@@ -1,3 +1,4 @@
+# app.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
@@ -15,6 +16,7 @@ from transformers import AutoTokenizer, AutoModel
 import torch
 import uuid
 from contextlib import asynccontextmanager
+from gradio import networking_utils
 
 load_dotenv()
 
@@ -80,14 +82,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Allow all origins for Hugging Face Spaces
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://yourdomain.github.io",
-        "https://ai-system-book.github.io"  # Add your actual GitHub Pages URL
-    ],
+    allow_origins=["*"],  # Allow all origins for Hugging Face Spaces
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -506,9 +504,20 @@ async def health():
         "embedding_model": "all-MiniLM-L6-v2"
     }
 
+# For Hugging Face Spaces, we need to create a Gradio interface wrapper
+import gradio as gr
+
+def run_backend():
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 7860)))
+
+# Create a simple Gradio interface to host the FastAPI backend
+with gr.Blocks() as demo:
+    gr.Markdown("# Physical AI Course Backend")
+    gr.Markdown("This space hosts the backend API for the Physical AI Course chatbot.")
+    gr.Markdown("API endpoints are available at `/api/*` paths.")
+
 if __name__ == "__main__":
     import uvicorn
-    import os
-    # Hugging Face PORT environment variable khud deta hai, default 7860 rakhein
-    port = int(os.getenv("PORT", 7860)) 
+    port = int(os.getenv("PORT", 7860))
     uvicorn.run(app, host="0.0.0.0", port=port)

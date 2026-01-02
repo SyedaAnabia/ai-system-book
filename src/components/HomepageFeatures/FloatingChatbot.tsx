@@ -7,7 +7,7 @@ interface Message {
 }
 
 // For GitHub Pages deployment, replace with your actual deployed backend URL
-const GITHUB_PAGES_API_BASE_URL = 'https://ai-system-book-backend.onrender.com'; // Replace with your actual deployed backend URL
+const GITHUB_PAGES_API_BASE_URL = 'https://your-username-physical-ai-course.hf.space'; // Replace with your actual Hugging Face Space URL
 
 // Determine the correct API base URL based on the current environment
 const getApiBaseUrl = () => {

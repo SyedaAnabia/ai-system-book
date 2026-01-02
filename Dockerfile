@@ -1,19 +1,21 @@
-FROM python:3.11-slim
+FROM python:3.10-slim
+
+# 1. Hugging Face user setup (Permissions issues se bachne ke liye)
+RUN useradd -m -u 1000 user
+USER user
+ENV PATH="/home/user/.local/bin:$PATH"
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
+# 2. Requirements install karein
+COPY --chown=user:user requirements.txt .
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY auth-backend/requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# 3. Baaki sara code copy karein
+COPY --chown=user:user . .
 
-COPY auth-backend/ .
+# 4. Port 7860 lazmi hai (HF isi port ko listen karta hai)
+EXPOSE 7860
 
-EXPOSE 8000
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# 5. App chalane ki command
+CMD ["python", "app.py"]
