@@ -82,10 +82,16 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Allow all origins for Hugging Face Spaces
+# Allow specific origins for Hugging Face Spaces
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for Hugging Face Spaces
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "https://syedaanabia.github.io",  # Your GitHub Pages domain
+        "https://ai-system-book-gi5z.vercel.app",  # Vercel deployment
+        "https://syeda204-rag-chatbot-deploy.hf.space"  # Your Hugging Face Space
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
