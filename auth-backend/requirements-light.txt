@@ -1,0 +1,16 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+psycopg2-binary==2.9.9
+bcrypt==4.1.1
+python-dotenv==1.0.0
+pydantic==2.5.0
+pydantic[email]==2.5.0
+httpx==0.25.2
+qdrant-client==1.7.0
+requests==2.31.0
+# Using a lighter sentence transformer model
+sentence-transformers==2.2.2
+# Alternative: Use transformers directly with a specific lightweight model
+transformers==4.35.0
+torch==2.1.0
