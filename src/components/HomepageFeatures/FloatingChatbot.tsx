@@ -7,9 +7,11 @@ interface Message {
 }
 
 // Fixed: Use window object instead of process.env for Docusaurus
-const API_BASE_URL = typeof window !== 'undefined' && (window as any).ENV_API_BASE_URL 
-  ? (window as any).ENV_API_BASE_URL 
-  : 'http://localhost:8000';
+const API_BASE_URL = typeof window !== 'undefined' && (window as any).ENV_API_BASE_URL
+  ? (window as any).ENV_API_BASE_URL
+  : (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+      ? 'https://ai-system-book-backend.onrender.com' // Replace with your actual deployed URL
+      : 'http://localhost:8000');
 
 const FloatingChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);

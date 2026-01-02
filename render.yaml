@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ai-system-book-backend
+    env: python
+    region: frankfurt  # You can change this to a region closer to you
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false  # Set this in your Render dashboard
+      - key: GROQ_API_KEY
+        sync: false  # Set this in your Render dashboard
+      - key: QDRANT_URL
+        sync: false  # Set this in your Render dashboard
+      - key: QDRANT_API_KEY
+        sync: false  # Set this in your Render dashboard

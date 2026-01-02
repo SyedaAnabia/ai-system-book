@@ -16,6 +16,54 @@ This comprehensive textbook covers building intelligent robots that operate in t
 
 The textbook is published at: [https://SyedaAnabia.github.io/ai-system-book/](https://SyedaAnabia.github.io/ai-system-book/)
 
+## Deployment Options
+
+### GitHub Pages (Default)
+To deploy to GitHub Pages:
+1. Push your changes to the main branch
+2. Run the deployment command:
+   ```bash
+   npm run gh-deploy
+   ```
+3. Enable GitHub Pages in your repository settings, selecting the `gh-pages` branch
+
+### Vercel
+To deploy to Vercel:
+1. Install the Vercel CLI: `npm i -g vercel`
+2. Build for Vercel: `npm run build:vercel`
+3. Deploy: `vercel --prod` (or connect your GitHub repo to Vercel dashboard)
+
+### Backend Deployment (Required for Chatbot)
+
+To deploy the backend API that powers the chatbot:
+
+#### Option 1: Deploy to Render (Recommended)
+1. Sign up at [https://render.com](https://render.com)
+2. Create a new Web Service
+3. Connect to your GitHub repository
+4. Use the `render.yaml` file in this repository
+5. Set the required environment variables in Render dashboard:
+   - `DATABASE_URL`
+   - `GROQ_API_KEY`
+   - `QDRANT_URL`
+   - `QDRANT_API_KEY`
+6. Update the `API_BASE_URL` in `src/components/HomepageFeatures/FloatingChatbot.tsx` with your Render URL
+
+#### Option 2: Deploy to Railway
+1. Sign up at [https://railway.app](https://railway.app)
+2. Import your repository
+3. Set the required environment variables
+4. Deploy the project
+5. Update the `API_BASE_URL` in `src/components/HomepageFeatures/FloatingChatbot.tsx` with your Railway URL
+
+#### Option 3: Deploy to Heroku
+1. Sign up at [https://heroku.com](https://heroku.com)
+2. Install Heroku CLI
+3. Create a new app
+4. Set the required environment variables
+5. Deploy using Git
+6. Update the `API_BASE_URL` in `src/components/HomepageFeatures/FloatingChatbot.tsx` with your Heroku URL
+
 ## Local Development
 
 To run this textbook locally:
@@ -43,7 +91,7 @@ To run this textbook locally:
 - [Docusaurus](https://docusaurus.io/): Static site generator optimized for documentation
 - React: Component-based UI library
 - TypeScript: Type-safe JavaScript
-- GitHub Pages: Hosting platform
+- GitHub Pages / Vercel: Hosting platforms
 
 ## Contributing
 
