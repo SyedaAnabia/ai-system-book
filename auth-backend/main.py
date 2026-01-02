@@ -11,7 +11,8 @@ import json
 import httpx
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
-from sentence_transformers import SentenceTransformer
+from transformers import AutoTokenizer, AutoModel
+import torch
 import uuid
 from contextlib import asynccontextmanager
 
@@ -45,6 +46,7 @@ async def lifespan(app: FastAPI):
 
     # Initialize Sentence Transformer
     print("📥 Loading embedding model...")
+    from sentence_transformers import SentenceTransformer
     embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 
     # Create collection if not exists
