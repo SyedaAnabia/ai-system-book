@@ -85,7 +85,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:3001",
-        "https://yourdomain.github.io"
+        "https://yourdomain.github.io",
+        "https://ai-system-book.github.io"  # Add your actual GitHub Pages URL
     ],
     allow_credentials=True,
     allow_methods=["*"],

@@ -6,12 +6,30 @@ interface Message {
   timestamp: Date;
 }
 
-// Fixed: Use window object instead of process.env for Docusaurus
-const API_BASE_URL = typeof window !== 'undefined' && (window as any).ENV_API_BASE_URL
-  ? (window as any).ENV_API_BASE_URL
-  : (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-      ? 'https://ai-system-book-backend.onrender.com' // Replace with your actual deployed backend URL
-      : 'http://localhost:8000');
+// For GitHub Pages deployment, replace with your actual deployed backend URL
+const GITHUB_PAGES_API_BASE_URL = 'https://ai-system-book-backend.onrender.com'; // Replace with your actual deployed backend URL
+
+// Determine the correct API base URL based on the current environment
+const getApiBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    // Check if we're on GitHub Pages
+    if (window.location.hostname.includes('github.io')) {
+      return GITHUB_PAGES_API_BASE_URL;
+    }
+    // For other non-localhost environments
+    if (window.location.hostname !== 'localhost' && !(window as any).ENV_API_BASE_URL) {
+      return GITHUB_PAGES_API_BASE_URL; // Default to deployed backend for any non-localhost environment
+    }
+  }
+  // Use the original logic for localhost and environment variable
+  return typeof window !== 'undefined' && (window as any).ENV_API_BASE_URL
+    ? (window as any).ENV_API_BASE_URL
+    : (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+        ? GITHUB_PAGES_API_BASE_URL // Use deployed backend for non-localhost
+        : 'http://localhost:8000');
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 const FloatingChatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -100,7 +118,7 @@ const FloatingChatbot: React.FC = () => {
       console.error('Chat error:', error);
 
       const errorMessage: Message = {
-        text: "Sorry, I'm having trouble connecting to the server right now. Please make sure the backend is running on http://localhost:8000. You can try again in a moment.",
+        text: "Sorry, I'm having trouble connecting to the server right now. Please check that the backend service is running and accessible. You can try again in a moment.",
         isUser: false,
         timestamp: new Date()
       };
