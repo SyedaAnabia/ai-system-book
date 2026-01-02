@@ -7,7 +7,7 @@ interface Message {
 }
 
 // For GitHub Pages deployment, replace with your actual deployed backend URL
-const GITHUB_PAGES_API_BASE_URL = 'https://your-username-physical-ai-course.hf.space'; // Replace with your actual Hugging Face Space URL
+const GITHUB_PAGES_API_BASE_URL = 'https://Syeda204-rag-chatbot-deploy.hf.space'; // Replace with your actual Hugging Face Space URL
 
 // Determine the correct API base URL based on the current environment
 const getApiBaseUrl = () => {
@@ -26,7 +26,7 @@ const getApiBaseUrl = () => {
     ? (window as any).ENV_API_BASE_URL
     : (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
         ? GITHUB_PAGES_API_BASE_URL // Use deployed backend for non-localhost
-        : 'http://localhost:8000');
+        : 'https://Syeda204-rag-chatbot-deploy.hf.space'); // Hugging Face Space URL
 };
 
 const API_BASE_URL = getApiBaseUrl();

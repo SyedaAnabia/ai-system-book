@@ -8,7 +8,7 @@ from typing import Dict, Optional
 
 # Configuration
 DOCS_FOLDER = r"C:\Users\ayana\Desktop\chatbott\ai-system-book\docs"
-API_URL = "http://localhost:8000/api/documents/upload"
+API_URL = "https://Syeda204-rag-chatbot-deploy.hf.space/api/documents/upload"
 
 # Progress tracking
 total_files = 0
@@ -137,12 +137,12 @@ def main():
     print("📚 Starting upload of course book data to Qdrant vector database...")
     print(f"📂 Reading from: {DOCS_FOLDER}")
     print(f"🔗 API endpoint: {API_URL}")
-    print("⚠️  Make sure your FastAPI backend is running on http://localhost:8000")
+    print("⚠️  Make sure your FastAPI backend is running on https://Syeda204-rag-chatbot-deploy.hf.space")
     print("-" * 60)
 
     # Check if API is accessible
     try:
-        response = requests.get("http://localhost:8000/health", timeout=10)
+        response = requests.get("https://Syeda204-rag-chatbot-deploy.hf.space/health", timeout=10)
         if response.status_code == 200:
             print("✅ Backend API is accessible")
         else:
