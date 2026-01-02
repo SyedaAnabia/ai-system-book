@@ -12,7 +12,7 @@ if (platform === 'vercel') {
   // For Vercel deployment
   configContent = configContent.replace(
     "url: 'https://SyedaAnabia.github.io',",
-    "url: 'https://your-vercel-project-url.vercel.app', // Replace with your actual Vercel URL"
+    "url: 'https://ai-system-book-gi5z.vercel.app', // Vercel deployment URL"
   );
   configContent = configContent.replace(
     "baseUrl: '/ai-system-book/',",
@@ -22,7 +22,7 @@ if (platform === 'vercel') {
 } else {
   // For GitHub Pages (default)
   configContent = configContent.replace(
-    "url: 'https://your-vercel-project-url.vercel.app', // Replace with your actual Vercel URL",
+    "url: 'https://ai-system-book-gi5z.vercel.app', // Vercel deployment URL",
     "url: 'https://SyedaAnabia.github.io',"
   );
   configContent = configContent.replace(

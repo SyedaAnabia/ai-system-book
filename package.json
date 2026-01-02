@@ -18,7 +18,8 @@
     "predeploy": "npm run build",
     "gh-deploy": "gh-pages -d build",
     "build:github": "node update-config.js && npm run build",
-    "build:vercel": "DEPLOY_PLATFORM=vercel node update-config.js && npm run build"
+    "build:vercel": "DEPLOY_PLATFORM=vercel node update-config.js && npm run build",
+    "vercel-build": "npm run build:vercel"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.59.2",
